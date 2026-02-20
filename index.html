@@ -3,19 +3,235 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Scrollable Frame Animation</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>Athiyaman B | Portfolio</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: #0f172a;
+      color: #e5e7eb;
+      overflow-x: hidden;
+    }
+
+    /* Animation canvas */
+    #scrollAnimation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.08; /* watermark transparency */
+      object-fit: cover;
+    }
+
+    /* Content wrapper */
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      margin: auto;
+      padding: 80px 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #f9fafb;
+    }
+
+    header h2 {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #94a3b8;
+      margin-top: 10px;
+    }
+
+    section {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 35px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    section h3 {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      color: #38bdf8;
+    }
+
+    p, li {
+      line-height: 1.6;
+      color: #cbd5f5;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    ul li {
+      padding: 6px 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
+
 <body>
 
-  <div class="spacer top"></div>
+  <!-- Scroll Animation -->
+  <canvas id="scrollAnimation"></canvas>
 
-  <section class="animation-container">
-    <img id="frame" src="frames/ezgif-frame-001.jpg" alt="animation frame"/>
-  </section>
+  <div class="container">
 
-  <div class="spacer bottom"></div>
+    <header>
+      <h1>ATHIYAMAN B</h1>
+      <h2>Electronics & Communication Engineering Student</h2>
+    </header>
 
-  <script src="script.js"></script>
+    <section>
+      <h3>Profile</h3>
+      <p>
+        Motivated Electronics Engineering student with a strong interest in 
+        embedded systems and programming. Quick learner with good problem-solving 
+        skills. Looking for opportunities to apply technical knowledge and gain 
+        practical experience.
+      </p>
+    </section>
+
+    <section>
+      <h3>Contact</h3>
+      <ul>
+        <li>📞 8220856258</li>
+        <li>📧 athiyaathiyamman@gmail.com</li>
+        <li>📍 73/5, Ayyanar Kovil St,<br>
+            Mil Krishnapuram,<br>
+            Rajapalayam</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>Education</h3>
+      <ul>
+        <li><strong>Anna University, Tirunelveli</strong><br>
+            Electronics and Communication Engineering (In Progress)</li>
+        <li>2023 – 2027</li>
+        <br>
+        <li><strong>SBK</strong><br>
+            High School</li>
+        <li>2022 – 2023</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>Skills</h3>
+      <div class="grid">
+        <ul>
+          <li>Python</li>
+          <li>Data Logics</li>
+          <li>Web Development</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h3>Languages</h3>
+      <ul>
+        <li>Tamil</li>
+        <li>English</li>
+      </ul>
+    </section>
+
+  </div>
+
+  <footer>
+    © 2026 Athiyaman B • Portfolio
+  </footer>
+
+  <script>
+    const canvas = document.getElementById("scrollAnimation");
+    const ctx = canvas.getContext("2d");
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    const frameCount = 240;
+    const images = [];
+    const imageSeq = { frame: 0 };
+
+    for (let i = 1; i <= frameCount; i++) {
+      const img = new Image();
+      const frameNumber = String(i).padStart(3, "0");
+      img.src = `frames/ezgif-frame-${frameNumber}.jpg`;
+      images.push(img);
+    }
+
+    function drawFrame(index) {
+      const img = images[index];
+      if (!img.complete) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const scale = Math.max(
+        canvas.width / img.width,
+        canvas.height / img.height
+      );
+
+      const x = canvas.width / 2 - (img.width / 2) * scale;
+      const y = canvas.height / 2 - (img.height / 2) * scale;
+
+      ctx.drawImage(
+        img,
+        x,
+        y,
+        img.width * scale,
+        img.height * scale
+      );
+    }
+
+    window.addEventListener("scroll", () => {
+      const scrollTop = document.documentElement.scrollTop;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollFraction = scrollTop / maxScroll;
+
+      const frameIndex = Math.min(
+        frameCount - 1,
+        Math.floor(scrollFraction * frameCount)
+      );
+
+      drawFrame(frameIndex);
+    });
+
+    images[0].onload = () => drawFrame(0);
+  </script>
+
 </body>
 </html>
